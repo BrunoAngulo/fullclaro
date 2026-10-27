@@ -4,7 +4,8 @@
   "version": "1.1.0",
   "description": "Captura bajo demanda la consulta del reporte AICC abierto para usarla en GTR Full Claro.",
   "permissions": ["cookies", "clipboardWrite", "debugger", "tabs", "storage", "scripting"],
-  "host_permissions": ["https://10.189.8.188:28090/*"],
+  "host_permissions": ["https://10.189.8.188:28090/*", "https://full-claro-dimensiones.vercel.app/*"],
   "background": { "service_worker": "service-worker.js" },
+  "content_scripts": [{ "matches": ["https://full-claro-dimensiones.vercel.app/*"], "js": ["bridge-content.js"], "run_at": "document_start" }],
   "action": { "default_popup": "popup.html", "default_title": "Generar paquete AICC" }
 }

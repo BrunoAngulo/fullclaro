@@ -16,6 +16,25 @@ async function allAiccCookies() {
 }
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message?.action === "aicc-request") {
+    (async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ url: ["https://10.189.8.188:28090/*"] });
+        if (!tab?.id) throw new Error("Abre AICC en este navegador y mantén tu sesión iniciada.");
+        const request = message.request || {};
+        const [result] = await chrome.scripting.executeScript({ target: { tabId: tab.id }, world: "MAIN", args: [request], func: async (input) => {
+          const isMonitor = input.type === "monitor";
+          const url = isMonitor ? "/service-cloud/rest/cmsapp/v2/agentinfomonitor/querydetails" : "/isa/queryTableData.view";
+          const response = await fetch(url, { method: "POST", credentials: "include", headers: isMonitor ? { Accept: "application/json", "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" } : { Accept: "application/json, text/plain, */*", "Content-Type": "application/x-www-form-urlencoded", "csrfwebtoken": input.csrf || "", "X-Requested-With": "XMLHttpRequest" }, body: isMonitor ? JSON.stringify({ condition: {}, limit: 500, offset: 0, defaultQuery: true }) : input.body });
+          const text = await response.text();
+          if (!response.ok) throw new Error(`AICC respondió ${response.status}.`);
+          return JSON.parse(text);
+        } });
+        sendResponse({ ok: true, data: result.result });
+      } catch (error) { sendResponse({ ok: false, error: error instanceof Error ? error.message : "No se pudo consultar AICC desde la extensión." }); }
+    })();
+    return true;
+  }
   if (message?.action === "read-capture") {
     chrome.storage.session.get("capturedPackage").then(({ capturedPackage }) => sendResponse(capturedPackage || {}));
     return true;

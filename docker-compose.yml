@@ -1,0 +1,41 @@
+services:
+  db:
+    image: mysql:8.4
+    container_name: full-claro-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-full_claro}
+      MYSQL_USER: ${MYSQL_USER:-fullclaro_app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-cambia_esta_clave}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-cambia_root_esta_clave}
+    ports:
+      - "127.0.0.1:3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-cambia_root_esta_clave}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: full-claro-dashboard
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-full_claro}
+      MYSQL_USER: ${MYSQL_USER:-fullclaro_app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-cambia_esta_clave}
+    ports:
+      - "127.0.0.1:3000:3000"
+
+volumes:
+  mysql_data:

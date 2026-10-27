@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "GTR Full Claro · Copiar sesión AICC",
+  "version": "1.1.0",
+  "description": "Captura bajo demanda la consulta del reporte AICC abierto para usarla en GTR Full Claro.",
+  "permissions": ["cookies", "clipboardWrite", "debugger", "tabs", "storage", "scripting"],
+  "host_permissions": ["https://10.189.8.188:28090/*"],
+  "background": { "service_worker": "service-worker.js" },
+  "action": { "default_popup": "popup.html", "default_title": "Generar paquete AICC" }
+}

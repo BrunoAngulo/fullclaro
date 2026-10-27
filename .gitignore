@@ -7,3 +7,5 @@ npm-debug.log*
 tmp-*.png
 *.tsbuildinfo
 .vercel
+
+.vercel

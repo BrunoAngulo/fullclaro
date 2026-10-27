@@ -25,7 +25,6 @@
     "d3-shape": "^3.2.0",
     "lucide-react": "^1.60.0",
     "motion": "^14.4.0",
-    "msnodesqlv8": "^6.0.0",
     "mssql": "^12.7.11",
     "mysql2": "^3.14.4",
     "next": "16.4.2",
@@ -46,6 +45,9 @@
     "@types/react-dom": "^19.0.4",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.8.2"
+  },
+  "optionalDependencies": {
+    "msnodesqlv8": "^6.0.0"
   },
   "allowScripts": {
     "msnodesqlv8@6.0.0": true
